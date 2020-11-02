@@ -1,8 +1,8 @@
 <template>
   <section class="d-flex flex-column">
     <div
-      v-for="todo in todos"
-      id="todo"
+      v-for="(todo, index) in todos"
+      :id="todo.id"
       :key="todo.id"
       class="card"
       style="margin-bottom: 3%"
@@ -22,7 +22,7 @@
           name="todo"
         >
         <h3
-          v-if="!editing"
+          v-if="!editing[index]"
           class="ml-2 p-3"
         >
           {{ todo.name }}
@@ -41,9 +41,9 @@
       </button>
       <button
         class="btn-warning"
-        @click="updateTodo"
+        @click="updateTodo(index)"
       >
-        {{ editing ? 'Update todo' : 'Changed todo' }}
+        {{ editing[index] ? 'Update todo' : 'Changed todo' }}
       </button>
     </div>
   </section>
@@ -58,13 +58,19 @@ export default {
   },
   data: () => {
     return {
-      editing: false
+      editing: this.todos.map(() => false),
     }
+  },
+  watch: {
+    todos(val) {
+      this.editing = val.map(() => false);
+    },
   },
   methods: {
     ...mapActions(['deleteTodo']),
-    updateTodo(){
-      this.editing = !this.editing
+    updateTodo(i){
+      this.editing = this.todos.map(() => false);
+      this.editing[i] = !this.editing[i]
       console.log(this.editing)
     }
   },
